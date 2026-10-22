@@ -3,10 +3,18 @@ using UnityEngine;
 
 public class AvatarRigBinder : NetworkBehaviour
 {
-    [Header("Gizlenecek Kafa Modeli")]
-    [SerializeField] private GameObject headVisualMesh; // Mor kafa / gözlük objesi
+    [Header("Görseller")]
+    [SerializeField] private GameObject headVisualMesh;
 
-    private Transform m_MainCameraTransform;
+    [Header("Ağ Kuklası Parçaları (Network Avatar)")]
+    [SerializeField] private Transform networkHead;
+    [SerializeField] private Transform networkLeftHand;
+    [SerializeField] private Transform networkRightHand;
+
+    // Yerel VR Donanım Referansları
+    private Transform m_LocalCamera;
+    private Transform m_LocalLeftController;
+    private Transform m_LocalRightController;
 
     public override void OnNetworkSpawn()
     {
@@ -14,11 +22,21 @@ public class AvatarRigBinder : NetworkBehaviour
 
         if (IsOwner)
         {
-            // 1. Sahnedeki kask kamerasını bul
+            // Sahnedeki yerel XR Origin parçalarını otomatik bul
             if (Camera.main != null)
-                m_MainCameraTransform = Camera.main.transform;
+            {
+                m_LocalCamera = Camera.main.transform;
+                
+                // XR Origin altındaki Controller objelerini yakala
+                var xrOrigin = Camera.main.transform.GetComponentInParent<Unity.XR.CoreUtils.XROrigin>();
+                if (xrOrigin != null)
+                {
+                    m_LocalLeftController = xrOrigin.transform.Find("Camera Offset/Left Controller");
+                    m_LocalRightController = xrOrigin.transform.Find("Camera Offset/Right Controller");
+                }
+            }
 
-            // 2. Kendi ekranımızda mor kafayı gizle (görüşümüzü kapatmasın)
+            // Kendi kafa mesh'imizi gizle
             if (headVisualMesh != null)
                 headVisualMesh.SetActive(false);
         }
@@ -26,11 +44,27 @@ public class AvatarRigBinder : NetworkBehaviour
 
     private void LateUpdate()
     {
-        // Sadece bu kaskın sahibi bizsek kafa pozisyonunu kaskla birebir eşitle
-        if (IsOwner && m_MainCameraTransform != null)
+        if (!IsOwner) return;
+
+        // Kafa takibi
+        if (m_LocalCamera != null && networkHead != null)
         {
-            transform.position = m_MainCameraTransform.position;
-            transform.rotation = m_MainCameraTransform.rotation;
+            networkHead.position = m_LocalCamera.position;
+            networkHead.rotation = m_LocalCamera.rotation;
+        }
+
+        // Sol el takibi
+        if (m_LocalLeftController != null && networkLeftHand != null)
+        {
+            networkLeftHand.position = m_LocalLeftController.position;
+            networkLeftHand.rotation = m_LocalLeftController.rotation;
+        }
+
+        // Sağ el takibi
+        if (m_LocalRightController != null && networkRightHand != null)
+        {
+            networkRightHand.position = m_LocalRightController.position;
+            networkRightHand.rotation = m_LocalRightController.rotation;
         }
     }
-}
+}   

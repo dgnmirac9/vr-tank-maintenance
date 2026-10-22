@@ -556,7 +556,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AvatarRigBinder
   ShowTopMostFoldoutHeaderGroup: 1
-  headVisualMesh: {fileID: 0}
+  headVisualMesh: {fileID: 8766417716020055518}
+  networkHead: {fileID: 7784919235243739335}
+  networkLeftHand: {fileID: 1523342480417178809}
+  networkRightHand: {fileID: 908897919254213233}
 --- !u!1 &5908336471056132768
 GameObject:
   m_ObjectHideFlags: 0
@@ -1325,6 +1328,12 @@ Transform:
 --- !u!4 &8278534051734837092 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 11aa239aa004f41ffaf96def6065ff4c,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460570068464185487}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8766417716020055518 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 11aa239aa004f41ffaf96def6065ff4c,
     type: 3}
   m_PrefabInstance: {fileID: 8460570068464185487}
   m_PrefabAsset: {fileID: 0}
